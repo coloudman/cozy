@@ -11,7 +11,6 @@ module.exports = {
         index:"./src/index.ts"
     },
     output:{
-        library: 'COZY',
         libraryTarget: 'commonjs',
         filename: 'index.js',
         path: path.resolve(__dirname, "dist")

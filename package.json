@@ -1,6 +1,6 @@
 {
   "name": "cozycode",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "cozycode",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "Coloud",
   "license": "MIT",
   "dependencies": {
-    "cozy_lib": "^3.4.0"
+    "cozy_lib": "^3.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
