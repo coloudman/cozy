@@ -1,3 +1,3 @@
-# COZY
+# COZYCode
 
-COZY is extensible visual programming library / tool.
+COZY(COZYCode) is extensible visual programming library / tool.

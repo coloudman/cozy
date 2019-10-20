@@ -11,8 +11,8 @@ module.exports = {
         index:"./src/index.ts"
     },
     output:{
-        library: 'COZY_LIB',
-        libraryTarget: 'umd',
+        library: 'COZY',
+        libraryTarget: 'commonjs',
         filename: 'index.js',
         path: path.resolve(__dirname, "dist")
     },
@@ -21,7 +21,7 @@ module.exports = {
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          //exclude: /node_modules/,
         },
       ]
     },
