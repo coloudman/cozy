@@ -6,6 +6,5 @@ import Compiler from "./Element/Compiler";
 export {
     Renderer,
     Compiler,
-
     COZY
 };
