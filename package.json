@@ -1,6 +1,6 @@
 {
   "name": "cozycode",
-  "version": "1.0.5",
+  "version": "1.2.0",
   "description": "cozycode",
   "main": "dist/index.js",
   "scripts": {

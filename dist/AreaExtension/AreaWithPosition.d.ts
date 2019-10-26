@@ -1,13 +1,12 @@
-import { Area, CodeLoader, ControllerLoaders } from "cozy_lib";
-import PositionedMixData from "../struct/PositionedMixData";
+import { Area, MixData } from "cozy_lib";
 import PositionedMix from "@src/struct/PositionedMix";
+import Position from "@src/struct/Position";
 declare class AreaWithPosition {
     area: Area;
-    private positionedMixDatas;
-    private readonly mixDatas;
     positionedMixes: PositionedMix[];
-    constructor(codeLoader: CodeLoader, controllerLoaders: ControllerLoaders, positionedMixDatas: PositionedMixData[]);
-    addPositionedMix(positionedMixData: PositionedMixData): PositionedMix;
+    private positions;
+    constructor(area: Area, positions: Position[]);
+    addPositionedMix(mixData: MixData, position: Position): PositionedMix;
     removePositionedMix(positionedMix: PositionedMix): void;
 }
 export default AreaWithPosition;

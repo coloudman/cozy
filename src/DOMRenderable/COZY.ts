@@ -8,6 +8,7 @@ import PositionedMixData from "@src/struct/PositionedMixData";
 type Composer = (compilers : Compiler[]) => any;
 
 class COZY {
+    /*
     cozyData: COZYData;
     parentElement: HTMLElement;
     composer: Composer
@@ -29,6 +30,7 @@ class COZY {
     compile() {
         return this.composer(this.areaWithPosition.area.getController("compiler"));
     }
+    */
 }
 
 export default COZY;

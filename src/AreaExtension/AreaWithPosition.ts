@@ -1,6 +1,7 @@
 import { Area, CodeLoader, ControllerLoaders, MixData } from "cozy_lib";
 import PositionedMixData from "../struct/PositionedMixData";
 import PositionedMix from "@src/struct/PositionedMix";
+import Position from "@src/struct/Position";
 
 /*
 Area의 확장이지만
@@ -10,30 +11,29 @@ Area 메서드에 대한 접근 권한은 없어야 함
 */
 class AreaWithPosition {
     public area: Area;
-    private positionedMixDatas: PositionedMixData[];
-    private readonly mixDatas: MixData[];
     public positionedMixes: PositionedMix[];
-    constructor(codeLoader : CodeLoader, controllerLoaders : ControllerLoaders, positionedMixDatas:PositionedMixData[]) {
-        this.positionedMixDatas = positionedMixDatas;
-        this.mixDatas = positionedMixDatas.map(positionedMixData => positionedMixData.mixData);
-        this.area = new Area(codeLoader, controllerLoaders, this.mixDatas);
+    private positions: Position[];
+    constructor(area : Area, positions : Position[]) {
+        this.area = area;
+        this.positions = positions;
         this.positionedMixes = this.area.mixes.map((mix, index) => {
             return {
                 mix: mix,
-                position: this.positionedMixDatas[index].position
+                position: this.positions[index]
             };
         });
     }
-    addPositionedMix(positionedMixData : PositionedMixData) : PositionedMix {
-        //positionedMixData
-        this.positionedMixDatas.push(positionedMixData);
+    addPositionedMix(mixData : MixData, position:Position) : PositionedMix {
+        //position
+        this.positions.push(position);
+
         //area mix, mixData auto add
-        const mix = this.area.addMix(positionedMixData.mixData);
+        const mix = this.area.addMix(mixData);
 
         //
         const positionedMix = {
             mix:mix,
-            position:positionedMixData.position
+            position:position
         }
 
         //positionedMixes
@@ -43,8 +43,8 @@ class AreaWithPosition {
     }
     removePositionedMix(positionedMix : PositionedMix) {
         const index = this.positionedMixes.indexOf(positionedMix);
-        //positionedMixData
-        this.positionedMixDatas.splice(index, 1);
+        //position
+        this.positions.splice(index, 1);
         //area mix, mixData auto remove
         this.area.removeMix(positionedMix.mix);
         //positionedMixes
