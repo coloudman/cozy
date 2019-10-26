@@ -1,4 +1,5 @@
-import COZY from "./COZY/COZY";
+import COZY from "./DOMRenderable/COZY";
 import Renderer from "./Element/Renderer";
 import Compiler from "./Element/Compiler";
-export { Renderer, Compiler, COZY };
+import AreaWithPosition from "./AreaExtension/AreaWithPosition";
+export { Renderer, Compiler, AreaWithPosition, COZY };

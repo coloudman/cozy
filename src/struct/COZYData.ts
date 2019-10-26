@@ -1,6 +1,7 @@
-import BlockData from "./BlockData";
+
+import PositionedMixData from "./PositionedMixData";
 
 
 export default interface COZYData {
-    blockDatas:BlockData[]
+    positionedMixDatas:PositionedMixData[]
 }
