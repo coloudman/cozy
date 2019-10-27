@@ -1,7 +1,6 @@
 
 
 const { Controller } = require("cozy_lib");
-console.log(Controller);
 
 class Number extends Controller {
     init() {

@@ -12,7 +12,7 @@ export default class AreaWithPositionRenderer {
         //DOM
         const div = document.createElement("div");
         div.style.display = "inline-block";
-
+        
         const renderer : any = positionedMix.mix.controllers.renderer;
         div.appendChild(renderer.render());
 
