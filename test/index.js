@@ -44,20 +44,20 @@ const mixData = {
     }
 };
 
-const positionedMixDatas = [];
+const mixDatas = [];
+const positions = [];
+
+const area = new Area(codeLoader, {
+    compiler:compilerLoader
+}, mixDatas);
 
 //코드 클래스들을 포지션으로 엮어줌
-const areaWithPosition = new AreaWithPosition(codeLoader, {
-    compiler:compilerLoader
-}, positionedMixDatas);
-areaWithPosition.area.addController("compiler");
+const areaWithPosition = new AreaWithPosition(area, positions);
+area.addController("compiler");
 
-const mix = areaWithPosition.addPositionedMix({
-    mixData:mixData,
-    position:{
-        x:10,
-        y:10
-    }
+const mix = areaWithPosition.addPositionedMix(mixData, {
+    x:10,
+    y:10
 }).mix;
 
 //링크 해봄
@@ -98,4 +98,4 @@ mix.linkingPoints.second.linked.link("second",{
 //컴파일 최고!
 console.log(areaWithPosition.area.getController("compiler")[0].compile());
 
-console.log(JSON.stringify(positionedMixDatas, null, 2));
+console.log(JSON.stringify([mixDatas,positions], null, 2));
