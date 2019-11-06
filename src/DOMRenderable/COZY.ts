@@ -1,9 +1,9 @@
 
-import { MixData, CodeLoader, ControllerLoaders, Area } from "cozy_lib";
+import { CodeData, CodeLoader, ControllerLoaders, Area } from "cozy_lib";
 import COZYData from "@src/struct/COZYData";
 import Compiler from "@src/Element/Compiler";
 import AreaWithPosition from "../AreaExtension/AreaWithPosition";
-import PositionedMixData from "@src/struct/PositionedMixData";
+import PositionedMixData from "@src/struct/PositionedCodeData";
 
 type Composer = (compilers : Compiler[]) => any;
 
@@ -31,6 +31,9 @@ class COZY {
         return this.composer(this.areaWithPosition.area.getController("compiler"));
     }
     */
+
+
+    //최종 단계임. 얘는 불러오면 바로 쓸 수 있음
 }
 
 export default COZY;

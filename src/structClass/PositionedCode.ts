@@ -1,8 +1,8 @@
-import { Mix } from "cozy_lib";
+import { Code } from "cozy_lib";
 import Position from "../struct/Position";
 import EventEmitter from "wolfy87-eventemitter";
 
-declare interface PositionedMix {
+declare interface PositionedCode {
     on(event : "positionChanged", listener : (position : Position) => void) : this
     on(event: string, listener: Function): this
     on(event: RegExp, listener: Function): this
@@ -12,12 +12,12 @@ declare interface PositionedMix {
     emit(event : RegExp, ...args : any): this
 }
 
-class PositionedMix extends EventEmitter {
-    mix:Mix;
+class PositionedCode extends EventEmitter {
+    code:Code;
     position:Position;
-    constructor(mix : Mix, position : Position) {
+    constructor(code : Code, position : Position) {
         super();
-        this.mix = mix;
+        this.code = code;
         this.position = position;
     }
     changePosition(x : number, y : number) {
@@ -27,4 +27,4 @@ class PositionedMix extends EventEmitter {
     }
 }
 
-export default PositionedMix;
+export default PositionedCode;

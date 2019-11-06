@@ -1,4 +1,4 @@
-import PositionedMixData from "./PositionedMixData";
+import PositionedCodeData from "./PositionedCodeData";
 export default interface COZYData {
-    positionedMixDatas: PositionedMixData[];
+    positionedCodeDatas: PositionedCodeData[];
 }

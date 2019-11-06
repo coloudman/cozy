@@ -1,7 +1,7 @@
-import { MixData } from "cozy_lib";
+import { CodeData } from "cozy_lib";
 import Position from "./Position";
 
 export default interface PositionedMixData {
-    mixData:MixData
+    mixData:CodeData
     position:Position
 }
