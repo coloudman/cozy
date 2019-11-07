@@ -11,6 +11,7 @@ abstract class RendererWithChildUtil extends Renderer {
     
     constructor(code : Code, data : Data, context : Context, linkingPointsManager : LinkingPointsManager<Code>) {
         super(code, data, context, linkingPointsManager);
+        this.linkListeners = {};
         this.on("stop", ()=>{
             //리스너들 제거
             Object.keys(this.linkListeners).forEach((linkingPointName) => {
