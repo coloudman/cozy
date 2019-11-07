@@ -1,6 +1,6 @@
 import Renderer from "./Renderer";
 import { Code, Data, Context, LinkingPointsManager } from "cozy_lib";
-declare abstract class RendererWithChild extends Renderer {
+declare abstract class RendererWithChildUtil extends Renderer {
     private linkListeners;
     constructor(code: Code, data: Data, context: Context, linkingPointsManager: LinkingPointsManager<Code>);
     abstract voidLinkingPointElement(linkingPointName: string): HTMLElement;
@@ -8,4 +8,4 @@ declare abstract class RendererWithChild extends Renderer {
     protected removeLinkElement(linkingPointName: string): void;
     abstract setup(): any;
 }
-export default RendererWithChild;
+export default RendererWithChildUtil;

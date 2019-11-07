@@ -2,7 +2,7 @@ import Renderer from "./Renderer";
 import { Code, Data, Context, LinkingPointsManager } from "cozy_lib";
 
 
-abstract class RendererWithChild extends Renderer {
+abstract class RendererWithChildUtil extends Renderer {
 
     private linkListeners: { // [onlink, onunlink]
         [linkingPointName : string]:[()=>any, ()=>any]
@@ -58,4 +58,4 @@ abstract class RendererWithChild extends Renderer {
     abstract setup():any
 }
 
-export default RendererWithChild;
+export default RendererWithChildUtil;
