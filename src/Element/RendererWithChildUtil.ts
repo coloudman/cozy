@@ -43,9 +43,9 @@ abstract class RendererWithChildUtil extends Renderer {
             box.appendChild(this.voidLinkingPointElement(linkingPointName));
         }];
 
-        this.code.getLinkingPoint(linkingPointName)
-        .on("link", linkListener[0])
-        .on("unlink", linkListener[1]);
+        this.getLinkingPoint(linkingPointName)
+        .on("linked", linkListener[0])
+        .on("unlinked", linkListener[1]);
 
         return box;
     }
