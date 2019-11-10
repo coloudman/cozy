@@ -54,17 +54,18 @@ export default class AreaWithPositionRenderer {
     getCodeLinkingPointsWithPosition() {
         return this.areaWithPosition.getPositionedCodes().map(positionedCode => {
             const renderer = <Renderer> positionedCode.code.getController("renderer");
-            const codeLinkingPointsWithPosition = renderer.getCodeLinkingPointsWithElement().map(codeLinkingPointWithPosition => {
+            const codeLinkingPointsWithPosition = renderer.getCodeLinkingPointsWithElement().map(codeLinkingPointWithElement => {
                 return ({
-                    position:this.getOffset(codeLinkingPointWithPosition.element),
-                    linkingPoint:codeLinkingPointWithPosition.linkingPoint
+                    position:this.getOffset(codeLinkingPointWithElement.element),
+                    linkingPoint:codeLinkingPointWithElement.linkingPoint
                 });
             });
             return codeLinkingPointsWithPosition;
         });
     }
 
-    private getOffset(element : HTMLElement) {
+    private getOffset(firstElement : HTMLElement) {
+        let element = firstElement;
         const offset = {
             x:0,
             y:0
@@ -73,7 +74,8 @@ export default class AreaWithPositionRenderer {
         do {
             offset.x += element.offsetLeft;
             offset.y += element.offsetTop;
-        } while(element.offsetParent !== this.parentElement);
+            element = <HTMLElement> element.offsetParent;
+        } while(element !== this.parentElement);
 
         return offset;
     }
