@@ -66,6 +66,9 @@ class AreaWithPosition extends EventEmitter {
         //이벤트
         this.emit("positionedCodeRemoved", positionedCode);
     }
+    getPositionedCodes() {
+        return this.positionedCodes;
+    }
 }
 
 export default AreaWithPosition;

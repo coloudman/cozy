@@ -1,6 +1,6 @@
 import Renderer from "./Renderer";
 import RendererWithChild from "./RendererWithChildUtil";
-import { Code, Data, Context, LinkingPointsManager } from "cozy_lib";
+import { Code, Data, Context, LinkingPointsManager, ControllerLinkingPointsManager } from "cozy_lib";
 
 
 
@@ -89,7 +89,7 @@ abstract class SquareBlock extends Renderer {
 
 abstract class SquareBlock extends RendererWithChild {
     
-    constructor(code : Code, data : Data, context : Context, linkingPointsManager : LinkingPointsManager<Code>) {
+    constructor(code : Code, data : Data, context : Context, linkingPointsManager : ControllerLinkingPointsManager) {
         super(code, data, context, linkingPointsManager);
 
         //RendererWithChildUtil보다 쓰기 쉽게 구현할 예정

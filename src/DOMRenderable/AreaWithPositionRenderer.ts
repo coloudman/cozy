@@ -2,18 +2,20 @@ import { AreaWithPosition } from "..";
 import Renderer from "@src/Element/Renderer";
 import Position from "../struct/Position";
 import PositionedCode from "@src/structClass/PositionedCode";
+import CodeLinkingPointWithPosition from "@src/structClass/CodeLinkingPointWithPosition";
 
 
 export default class AreaWithPositionRenderer {
     parentElement: HTMLElement;
     areaWithPosition: AreaWithPosition;
     rendered: HTMLElement[];
+    rendererControllerName: string;
     private createDiv(positionedCode : PositionedCode) {
         //DOM
         const div = document.createElement("div");
         div.style.display = "inline-block";
         
-        const renderer : any = positionedCode.code.controllers.renderer;
+        const renderer = <Renderer> positionedCode.code.getController(this.rendererControllerName);
         div.appendChild(renderer.render());
 
         function changePosition(position : Position) {
@@ -26,9 +28,13 @@ export default class AreaWithPositionRenderer {
         positionedCode.on("positionChanged", changePosition);
         return div;
     }
-    constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition) {
+    constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition, rendererControllerName : string = "renderer") {
+        //참고로 parentElement는 relative임
+        this.parentElement.style.position = "relative";
+
         this.parentElement = parentElement;
         this.areaWithPosition = areaWithPosition;
+        this.rendererControllerName = rendererControllerName;
 
         //기본적으로 존재하던 블록들 로드
         areaWithPosition.positionedCodes.forEach((positionedCode) => {
@@ -43,5 +49,32 @@ export default class AreaWithPositionRenderer {
         areaWithPosition.on("positionedCodeRemoved", (positionedCode, index) => {
             this.parentElement.children[index].outerHTML = "";
         });
+    }
+
+    getCodeLinkingPointsWithPosition() {
+        return this.areaWithPosition.getPositionedCodes().map(positionedCode => {
+            const renderer = <Renderer> positionedCode.code.getController("renderer");
+            const codeLinkingPointsWithPosition = renderer.getCodeLinkingPointsWithElement().map(codeLinkingPointWithPosition => {
+                return ({
+                    position:this.getOffset(codeLinkingPointWithPosition.element),
+                    linkingPoint:codeLinkingPointWithPosition.linkingPoint
+                });
+            });
+            return codeLinkingPointsWithPosition;
+        });
+    }
+
+    private getOffset(element : HTMLElement) {
+        const offset = {
+            x:0,
+            y:0
+        };
+
+        do {
+            offset.x += element.offsetLeft;
+            offset.y += element.offsetTop;
+        } while(element.offsetParent !== this.parentElement);
+
+        return offset;
     }
 }

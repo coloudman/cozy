@@ -19,5 +19,6 @@ declare class AreaWithPosition extends EventEmitter {
     constructor(area: Area, positions: Position[]);
     addPositionedCode(codeData: CodeData, position: Position): PositionedCode;
     removePositionedCode(positionedCode: PositionedCode): void;
+    getPositionedCodes(): PositionedCode[];
 }
 export default AreaWithPosition;

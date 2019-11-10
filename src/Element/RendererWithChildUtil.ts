@@ -1,5 +1,5 @@
 import Renderer from "./Renderer";
-import { Code, Data, Context, LinkingPointsManager } from "cozy_lib";
+import { Code, Data, Context, ControllerLinkingPointsManager } from "cozy_lib";
 
 
 abstract class RendererWithChildUtil extends Renderer {
@@ -9,7 +9,7 @@ abstract class RendererWithChildUtil extends Renderer {
     }
 
     
-    constructor(code : Code, data : Data, context : Context, linkingPointsManager : LinkingPointsManager<Code>) {
+    constructor(code : Code, data : Data, context : Context, linkingPointsManager : ControllerLinkingPointsManager) {
         super(code, data, context, linkingPointsManager);
         this.linkListeners = {};
         this.on("stop", ()=>{
