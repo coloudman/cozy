@@ -30,9 +30,9 @@ export default class AreaWithPositionRenderer {
     }
     constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition, rendererControllerName : string = "renderer") {
         //참고로 parentElement는 relative임
-        this.parentElement.style.position = "relative";
-
         this.parentElement = parentElement;
+        this.parentElement.style.position = "relative";
+        
         this.areaWithPosition = areaWithPosition;
         this.rendererControllerName = rendererControllerName;
 
