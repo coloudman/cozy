@@ -1,9 +1,9 @@
 
 import { CodeData, CodeLoader, ControllerLoaders, Area } from "cozy_lib";
-import COZYData from "@src/struct/COZYData";
-import Compiler from "@src/Element/Compiler";
+import COZYData from "../struct/COZYData";
+import Compiler from "../Element/Compiler";
 import AreaWithPosition from "../AreaExtension/AreaWithPosition";
-import PositionedMixData from "@src/struct/PositionedCodeData";
+import PositionedMixData from "../struct/PositionedCodeData";
 
 type Composer = (compilers : Compiler[]) => any;
 

@@ -1,8 +1,8 @@
 import { AreaWithPosition } from "..";
-import Renderer from "@src/Element/Renderer";
+import Renderer from "../Element/Renderer";
 import Position from "../struct/Position";
-import PositionedCode from "@src/structClass/PositionedCode";
-import CodeLinkingPointWithPosition from "@src/structClass/CodeLinkingPointWithPosition";
+import PositionedCode from "../structClass/PositionedCode";
+import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
 
 
 export default class AreaWithPositionRenderer {

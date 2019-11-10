@@ -13,7 +13,7 @@
   "author": "Coloud",
   "license": "MIT",
   "dependencies": {
-    "cozy_lib": "^9.0.2",
+    "cozy_lib": "^9.0.3",
     "wolfy87-eventemitter": "^5.2.8"
   },
   "devDependencies": {

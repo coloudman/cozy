@@ -1,5 +1,5 @@
 import { Controller, Code, Data, Context, ControllerLinkingPointsManager } from "cozy_lib";
-import CodeLinkingPointWithElement from "@src/structClass/CodeLinkingPointWithElement";
+import CodeLinkingPointWithElement from "../structClass/CodeLinkingPointWithElement";
 declare abstract class Renderer extends Controller {
     abstract render(): HTMLElement;
     abstract getCodeLinkingPointsWithElement(): CodeLinkingPointWithElement[];

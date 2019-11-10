@@ -7,10 +7,6 @@
         "target": "es2017",
         "esModuleInterop": true,
         "declaration": true,
-        "baseUrl": ".",
-        "paths": {
-            "@src/*":["src/*"]
-        },
         "lib": ["dom","es2017"]
     },
     "include": [

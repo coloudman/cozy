@@ -1,6 +1,6 @@
 import { Area, CodeData } from "cozy_lib";
 import PositionedCode from "../structClass/PositionedCode";
-import Position from "@src/struct/Position";
+import Position from "../struct/Position";
 import EventEmitter from "wolfy87-eventemitter";
 declare interface AreaWithPosition {
     on(event: "positionedCodeAdded", listener: (code: PositionedCode) => void): this;
