@@ -1,8 +1,8 @@
-import COZY from "./DOMRenderable/COZY";
-import Renderer from "./Element/Renderer";
-import Compiler from "./Element/Compiler";
 import AreaWithPosition from "./AreaExtension/AreaWithPosition";
 import AreaWithPositionRenderer from "./DOMRenderable/AreaWithPositionRenderer";
-import SquareBlock from "./Element/SquareBlock";
+import COZY from "./DOMRenderable/COZY";
+import Compiler from "./Element/Compiler";
+import Renderer from "./Element/Renderer";
 import RendererWithChildUtil from "./Element/RendererWithChildUtil";
-export { Renderer, Compiler, RendererWithChildUtil, AreaWithPosition, AreaWithPositionRenderer, COZY, SquareBlock };
+import SquareBlock from "./Element/SquareBlock";
+export { AreaWithPosition, AreaWithPositionRenderer, COZY, Renderer, Compiler, RendererWithChildUtil, SquareBlock };

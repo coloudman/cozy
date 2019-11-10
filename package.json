@@ -1,6 +1,6 @@
 {
   "name": "cozycode",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "cozycode",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "Coloud",
   "license": "MIT",
   "dependencies": {
-    "cozy_lib": "^8.1.0",
+    "cozy_lib": "^9.0.2",
     "wolfy87-eventemitter": "^5.2.8"
   },
   "devDependencies": {
