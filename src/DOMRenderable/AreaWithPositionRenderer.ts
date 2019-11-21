@@ -4,6 +4,12 @@ import Position from "../struct/Position";
 import PositionedCode from "../structClass/PositionedCode";
 import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
 
+/*
+이 친구는 렌더링 '만' 합니다.
+딴거 안 합니다.
+
+뗐다 붙였다 못 합니다. 그건 콘텍스트를 이용해서 따로 빼십쇼~
+*/
 
 export default class AreaWithPositionRenderer {
     parentElement: HTMLElement;
@@ -51,20 +57,21 @@ export default class AreaWithPositionRenderer {
         });
     }
 
-    getCodeLinkingPointsWithPosition() {
-        return this.areaWithPosition.getPositionedCodes().map(positionedCode => {
-            const renderer = <Renderer> positionedCode.code.getController("renderer");
-            const codeLinkingPointsWithPosition = renderer.getCodeLinkingPointsWithElement().map(codeLinkingPointWithElement => {
-                return ({
+    getCodeLinkingPointsWithPosition() : CodeLinkingPointWithPosition[] {
+        let codeLinkingPointsWithPosition : CodeLinkingPointWithPosition[] = [];
+        this.areaWithPosition.getPositionedCodes().forEach(positionedCode => {
+            const renderer = <Renderer> positionedCode.code.getController(this.rendererControllerName);
+            renderer.getCodeLinkingPointsWithElement().forEach(codeLinkingPointWithElement => {
+                codeLinkingPointsWithPosition.push({
                     position:this.getOffset(codeLinkingPointWithElement.element),
                     linkingPoint:codeLinkingPointWithElement.linkingPoint
                 });
             });
-            return codeLinkingPointsWithPosition;
         });
+        return codeLinkingPointsWithPosition;
     }
 
-    private getOffset(firstElement : HTMLElement) {
+    protected getOffset(firstElement : HTMLElement) {
         let element = firstElement;
         const offset = {
             x:0,

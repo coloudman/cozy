@@ -6,9 +6,7 @@ import EventEmitter from "wolfy87-eventemitter";
 
 /*
 Area의 확장이지만
-무조건적으로 모든 코드가 좌표를 가지므로
-Area 메서드에 대한 접근 권한은 없어야 함
-즉 extends는 아님.
+extends는 아님.
 */
 
 declare interface AreaWithPosition {
@@ -31,12 +29,31 @@ class AreaWithPosition extends EventEmitter {
         super();
         this.area = area;
         this.positions = positions;
+
+        //데이터로부터의 로드요.
         this.positionedCodes = this.area.codes.map((code, index) => {
             return new PositionedCode(code, this.positions[index]);
         });
+
+        //stop으로 인해 죽어버린 놈들은 없애기 위해
+        area.on("codeRemoved", code => {
+            const index = this.positionedCodes.findIndex(positionedCode => {
+                return positionedCode.code === code;
+            });
+            const positionedCode = this.positionedCodes[index];
+
+            //position (data)
+            this.positions.splice(index, 1);
+
+            //positionedCodes
+            this.positionedCodes.splice(index,1);
+
+            //이벤트
+            this.emit("positionedCodeRemoved", positionedCode, index);
+        });
     }
     addPositionedCode(codeData : CodeData, position:Position) : PositionedCode {
-        //position
+        //position(data)
         this.positions.push(position);
 
         //area code, codeData auto add
@@ -54,7 +71,8 @@ class AreaWithPosition extends EventEmitter {
     }
     removePositionedCode(positionedCode : PositionedCode) {
         const index = this.positionedCodes.indexOf(positionedCode);
-        //position
+
+        //position(data)
         this.positions.splice(index, 1);
 
         //area code, codeData auto remove
@@ -64,7 +82,7 @@ class AreaWithPosition extends EventEmitter {
         this.positionedCodes.splice(index, 1);
         
         //이벤트
-        this.emit("positionedCodeRemoved", positionedCode);
+        this.emit("positionedCodeRemoved", positionedCode, index);
     }
     getPositionedCodes() {
         return this.positionedCodes;

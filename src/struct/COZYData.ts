@@ -1,7 +1,11 @@
+import { CodeData } from "cozy_lib";
+import Contexts from "cozy_lib/dist/structClass/Contexts";
+import Position from "./Position";
 
-import PositionedCodeData from "./PositionedCodeData";
 
 
 export default interface COZYData {
-    positionedCodeDatas:PositionedCodeData[]
+    codeDatas:CodeData[]
+    contexts:Contexts
+    positions:Position[]
 }

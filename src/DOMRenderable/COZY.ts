@@ -1,36 +1,43 @@
 
-import { CodeData, CodeLoader, ControllerLoaders, Area } from "cozy_lib";
+import { CodeData, CodeLoader, ControllerLoaders, Area, Context, Controller } from "cozy_lib";
 import COZYData from "../struct/COZYData";
 import Compiler from "../Element/Compiler";
 import AreaWithPosition from "../AreaExtension/AreaWithPosition";
-import PositionedMixData from "../struct/PositionedCodeData";
+import Contexts from "cozy_lib/dist/structClass/Contexts";
+import Draggable from "./Draggable";
 
-type Composer = (compilers : Compiler[]) => any;
+/*
+COZY는 렌더가 있습니다.
+그외에는 compose라는 개념으로
+여러 녀석들을 하나로 통합하는 도구를 만들수 있게 합니다.
+*/
+
+type Composer = (controllers : Controller[], context : Context) => any;
 
 class COZY {
-    /*
+    
     cozyData: COZYData;
     parentElement: HTMLElement;
     composer: Composer
     areaWithPosition: AreaWithPosition;
-    constructor(codeLoader : CodeLoader, controllerLoaders : ControllerLoaders, cozyData : COZYData, parentElement : HTMLElement) {
+    area: Area;
+    draggableElement: HTMLDivElement;
+    draggable: Draggable;
+    constructor(parentElement : HTMLElement, codeLoader : CodeLoader, cozyData:COZYData, rendererControllerName : string = "renderer", distance : number = 15) {
         this.parentElement = parentElement;
-        this.cozyData = cozyData;
-        this.areaWithPosition = new AreaWithPosition(codeLoader, controllerLoaders, cozyData.positionedMixDatas);
 
+        const draggableElement = document.createElement("div");
+        draggableElement.style.width = "100%";
+        draggableElement.style.height = "100%";
 
-    }
-    setComposer(composer : Composer) {
-        this.composer = composer;
-    }
-    addPositionedMixData(positionedMixData : PositionedMixData) {
-        this.areaWithPosition.addPositionedMix(positionedMixData);
-    }
+        this.draggableElement = draggableElement;
 
-    compile() {
-        return this.composer(this.areaWithPosition.area.getController("compiler"));
+        parentElement.appendChild(draggableElement);
+        
+        this.area = new Area(codeLoader, cozyData.codeDatas, cozyData.contexts)
+        this.areaWithPosition = new AreaWithPosition(this.area, cozyData.positions);
+        this.draggable = new Draggable(this.draggableElement, this.areaWithPosition, rendererControllerName, distance);
     }
-    */
 
 
     //최종 단계임. 얘는 불러오면 바로 쓸 수 있음

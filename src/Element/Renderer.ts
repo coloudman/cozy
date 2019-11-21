@@ -1,18 +1,15 @@
 
 import { Controller, Code, Data, Context, ControllerLinkingPointsManager } from "cozy_lib";
 import CodeLinkingPointWithElement from "../structClass/CodeLinkingPointWithElement";
+import Position from "../struct/Position";
+import RendererContext from "../Context/RendererContext";
 
 abstract class Renderer extends Controller {
-    abstract render() : HTMLElement;
+    abstract render() : HTMLElement; //한 번만 호출됩니다!
+    abstract getHTMLElement() : HTMLElement //그 이후에 이 Renderer가 관리하는 HTMLElement를 빼올때 사용합니다.
     abstract getCodeLinkingPointsWithElement() : CodeLinkingPointWithElement[];
     constructor(code : Code, data : Data, context : Context, linkingPointsManager : ControllerLinkingPointsManager) {
         super(code, data, context, linkingPointsManager);
-        this.on("stop", ()=>{Object.values(this.getLinkingPoints()).forEach(linkingPoint => { //연결점에 연결되어 있는 다른 렌더러들도 모두 스탑함
-                if(linkingPoint.linked) {
-                    linkingPoint.linked.stop();
-                }
-            });
-        });
     }
 }
 
