@@ -78,7 +78,6 @@ class COZY {
 
         this.search = function search() {
             const searchInputValue = this.searchInput.value;
-            console.log(searchInputValue);
             searchedDiv.innerHTML = "";
             Object.entries(codeLoader.packages).forEach(([outPackageName, codePackage] : [string, CodePackage]) => {
                 Object.entries(codePackage.body).forEach(([codeName, codeClass]) => {
