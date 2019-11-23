@@ -1,22 +1,11 @@
 import AreaWithPositionRenderer from "./AreaWithPositionRenderer";
 import AreaWithPosition from "../AreaExtension/AreaWithPosition";
 import Position from "../struct/Position";
-import { CodeData } from "cozy_lib";
+import { CodeData, Code } from "cozy_lib";
 import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
+import getRelativeElementPosition from "../Util/Render/getRelativeElementPosition";
+import Renderer from "../Element/Renderer/Renderer";
 
-//상대좌표를 구합니다.
-function getRelativeElementPosition(a : HTMLElement, b : HTMLElement) : Position {
-    let now = a;
-    let offset = {x:0,y:0};
-    do {
-        offset.x += now.offsetLeft;
-        offset.y += now.offsetTop;
-        now = <HTMLElement> now.offsetParent;
-    }
-    while(now !== b);
-
-    return offset;
-}
 
 
 /*
@@ -26,6 +15,7 @@ function getRelativeElementPosition(a : HTMLElement, b : HTMLElement) : Position
 class Draggable extends AreaWithPositionRenderer {
     blocksParentElement: HTMLDivElement;
     tempBlocksParentElement: HTMLDivElement;
+    distance: number;
     constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition, rendererControllerName : string = "renderer", distance : number = 15) {
         parentElement.style.position = "relative";
 
@@ -36,15 +26,37 @@ class Draggable extends AreaWithPositionRenderer {
         parentElement.appendChild(blocksParentElement);
 
         super(blocksParentElement, areaWithPosition, rendererControllerName);
+        this.blocksParentElement = blocksParentElement;
+        
+        //tempBlock (블럭 공중에 띄우는 것)
+        const tempBlocksParentElement = document.createElement("div");
+        tempBlocksParentElement.style.width = "100%";
+        tempBlocksParentElement.style.height = "100%";
+        tempBlocksParentElement.style.position = "absolute";
+        tempBlocksParentElement.style.left = "0px";
+        tempBlocksParentElement.style.top = "0px";
+        tempBlocksParentElement.style.zIndex = "2";
+        tempBlocksParentElement.style.display = "none";
+        parentElement.appendChild(tempBlocksParentElement);
+        this.tempBlocksParentElement = tempBlocksParentElement;
+
+        this.distance = distance;
 
         /*
         Draggable에서는 렌더러 콘텍스트에
         drag 관련된 함수들을 추가해 줍니다.
         (콘텍스트 개조)
         */
+       const _this = this;
+        (<any> areaWithPosition.area.contexts[this.rendererControllerName]).dragStart = function dragStart(clickPosition : Position, code : Code) {
+            return _this.dragStart(getRelativeElementPosition((<Renderer>code.getController(_this.rendererControllerName)).rendered, _this.blocksParentElement), clickPosition, code);
+        }
+    }
+    dragStart( _position : Position, clickPosition : Position, code : Code) {
         const _this = this;
-        (<any> areaWithPosition.area.contexts[this.rendererControllerName]).dragStart = function dragStart(element : HTMLElement, clickPosition : Position, codeData : CodeData) {
-            const position = getRelativeElementPosition(element, blocksParentElement);
+            const position = {
+                ..._position
+            };
 
             //'전' 마우스 위치 입니다.
             const mousePosition = {
@@ -62,11 +74,11 @@ class Draggable extends AreaWithPositionRenderer {
             }
             repositionDiv();
 
-            div.appendChild(element.cloneNode(true));
+            div.appendChild((<Renderer>code.getController(_this.rendererControllerName)).render().cloneNode(true));
 
             //뜬 블럭이 위쪽에 보이도록
-            tempBlocksParentElement.style.zIndex = "2";
-            tempBlocksParentElement.appendChild(div);
+            this.tempBlocksParentElement.style.display = "block";
+            this.tempBlocksParentElement.appendChild(div);
 
             let firstDrag = true;
             let linkingPointsWithPosition : CodeLinkingPointWithPosition[];
@@ -101,46 +113,31 @@ class Draggable extends AreaWithPositionRenderer {
 
                 //딱 연결할만할 놈을 찾습니다
                 const linkingPointWithPosition = linkingPointsWithPosition.find(linkingPointWithPosition => {
-                    return(linkingPointWithPosition.position.x - position.x) **2 + (linkingPointWithPosition.position.y - position.y)**2 <= distance**2;
+                    return (linkingPointWithPosition.position.x - position.x) **2 + (linkingPointWithPosition.position.y - position.y)**2 <= _this.distance**2;
                 });
                 if(linkingPointWithPosition) { //연결할 곳 있다
                     const linkingPoint = linkingPointWithPosition.linkingPoint;
                     if(linkingPoint.linked) { //이미 연결된 놈 있다
-                        const linkedCodeData = linkingPoint.linked.codeData;
-                        linkingPoint.linked.stop();
-                        areaWithPosition.addPositionedCode(linkedCodeData, {
-                            x:position.x + 2*distance,
-                            y:position.y + 2*distance
+                        const linkedCode = linkingPoint.linked;
+                        linkingPoint.linked.unlinkSelf();
+                        _this.areaWithPosition.addPositionedCode(linkedCode, {
+                            x:position.x + 2*_this.distance,
+                            y:position.y + 2*_this.distance
                         });
                     }
-                    linkingPointWithPosition.linkingPoint.link(codeData);
+                    linkingPointWithPosition.linkingPoint.link(code);
                 } else { //없다..
-                    areaWithPosition.addPositionedCode(codeData, position);
+                    _this.areaWithPosition.addPositionedCode(code, position);
                 }
                 //끄읕내.
                 div.outerHTML = "";
-                tempBlocksParentElement.removeEventListener("mousemove", drag);
-                tempBlocksParentElement.removeEventListener("mouseup", dragEnd);
-                tempBlocksParentElement.style.zIndex = "0";
+                _this.tempBlocksParentElement.removeEventListener("mousemove", drag);
+                _this.tempBlocksParentElement.removeEventListener("mouseup", dragEnd);
+                _this.tempBlocksParentElement.style.display = "none";
             }
 
-            tempBlocksParentElement.addEventListener("mousemove", drag);
-            tempBlocksParentElement.addEventListener("mouseup", dragEnd);
-        };
-
-        this.blocksParentElement = blocksParentElement;
-        
-        const tempBlocksParentElement = document.createElement("div");
-        tempBlocksParentElement.style.width = "100%";
-        tempBlocksParentElement.style.height = "100%";
-        tempBlocksParentElement.style.position = "absolute";
-        tempBlocksParentElement.style.left = "0px";
-        tempBlocksParentElement.style.top = "0px";
-        tempBlocksParentElement.style.zIndex = "0";
-        parentElement.appendChild(tempBlocksParentElement);
-        this.tempBlocksParentElement = tempBlocksParentElement;
-
-
+            this.tempBlocksParentElement.addEventListener("mousemove", drag);
+            this.tempBlocksParentElement.addEventListener("mouseup", dragEnd);
     }
 }
 

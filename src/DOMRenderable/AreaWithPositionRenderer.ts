@@ -1,5 +1,5 @@
 import { AreaWithPosition } from "..";
-import Renderer from "../Element/Renderer";
+import Renderer from "../Element/Renderer/Renderer";
 import Position from "../struct/Position";
 import PositionedCode from "../structClass/PositionedCode";
 import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
@@ -20,6 +20,7 @@ export default class AreaWithPositionRenderer {
         //DOM
         const div = document.createElement("div");
         div.style.display = "inline-block";
+        div.style.pointerEvents = "none";
         
         const renderer = <Renderer> positionedCode.code.getController(this.rendererControllerName);
         div.appendChild(renderer.render());

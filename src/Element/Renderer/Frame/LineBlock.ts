@@ -1,31 +1,43 @@
-import Renderer from "./Renderer";
-import RendererWithChild from "./RendererWithChildUtil";
+import Renderer from "../Renderer";
 import { Code, Data, Context, LinkingPointsManager, ControllerLinkingPointsManager } from "cozy_lib";
+import RendererWithChildUtil from "../RendererWithChildUtil";
 
 
-
-/*
-abstract class SquareBlock extends Renderer {
+abstract class LineBlock extends RendererWithChildUtil {
     private div: HTMLDivElement;
     private elements: (string | HTMLElement)[]
 
-    private linkListeners: { // [onlink, onunlink]
-        [linkingPointName : string]:[()=>any, ()=>any]
+    abstract getElements() : (string | HTMLElement)[];
+    abstract decorate(div : HTMLDivElement) : HTMLDivElement;
+    abstract getVoidLinkingPointElement(linkingPointName : string) : HTMLElement;
+    linkingPointElements: {
+        [linkingPointName:string] : HTMLElement
     }
 
-    init() {
+    renderE() {
+        this.linkingPointElements = {};
         this.div = document.createElement("div");
-        this.setup();
+        this.div.style.display = "inline-flex";
+        this.div.style.alignItems = "center";
+        this.elements = this.getElements();
+        this.elements.forEach(element => {
+            if(typeof element === "string") {
+                const linkingPointElement = this.addLinkElement(element, this.getVoidLinkingPointElement(element));
+                this.linkingPointElements[element] = linkingPointElement;
+                this.div.appendChild(linkingPointElement);
+            } else {
+                this.div.appendChild(element);
+            }
+        });
+        const decoratedDiv = this.decorate(this.div);
+        return decoratedDiv;
+    }
+    getCodeLinkingPointsWithElement() {
+        const codeLinkingPointsWithElement = this.getCodeLinkingPointsWithElementFrom(this.linkingPointElements);
+        return codeLinkingPointsWithElement;
     }
 
-    private voidLinkingPointElement() {
-        const div = document.createElement("div");
-        div.style.width = "50px";
-        div.style.height = "50px";
-        div.style.backgroundColor = "white";
-        return div;
-    }
-
+/*
     protected addElement(element : string | HTMLElement, index = (this.elements.length-1)) {
         //일단 엘리먼트 배열에 넣음
         this.elements.splice(index, 0, element);
@@ -69,11 +81,6 @@ abstract class SquareBlock extends Renderer {
         this.div.style.background = background;
     }
 
-    render() {
-
-        return this.div;
-    }
-
     afterStop() {
         //링크 관련 리스너들 제거
         Object.entries(this.linkListeners).forEach(([linkingPointName, listeners]) => {
@@ -82,18 +89,7 @@ abstract class SquareBlock extends Renderer {
             .removeListener("unlink", listeners[1]);
         });
     }
-
-    abstract setup():any
-}
 */
-
-abstract class SquareBlock extends RendererWithChild {
-    
-    constructor(code : Code, data : Data, context : Context, linkingPointsManager : ControllerLinkingPointsManager) {
-        super(code, data, context, linkingPointsManager);
-
-        //RendererWithChildUtil보다 쓰기 쉽게 구현할 예정
-    }
 }
 
-export default SquareBlock;
+export default LineBlock;

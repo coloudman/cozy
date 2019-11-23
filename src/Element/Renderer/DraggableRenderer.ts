@@ -1,6 +1,9 @@
 import Renderer from "./Renderer";
 import { Code, Data, Context, ControllerLinkingPointsManager } from "cozy_lib";
-import DraggableRendererContext from "../Context/DraggableRendererContext";
+import DraggableRendererContext from "../../Context/DraggableRendererContext";
+import RendererWithChildUtil from "./RendererWithChildUtil";
+import getRelativeClickPosition from "../../Util/Render/getRelativeClickPosition";
+import Position from "../../struct/Position";
 /*
 DraggableRenderer 클래스는
 드래그가 가능한 클래스입니다.
@@ -23,17 +26,24 @@ this.dragStarted로 드래그 시작 호출
 그 이후에 마우스를 떼건 뭘 하건.. 그건 알아서.
 */
 
-abstract class DraggableRenderer extends Renderer {
+abstract class DraggableRenderer extends RendererWithChildUtil {
     dragStart(position : Position) { //여기서 position은 마우스의 x,y를 나타냅니다.
         const context = <DraggableRendererContext> this.context;
+        
+        context.dragStart(position, this.code);
 
-        const element = this.getHTMLElement();
-        context.dragStart(element, position, this.code.codeData);
-
-        this.code.stop(); //블록을 뗍니다.
-
-
+        this.code.unlinkSelf(); //블록을 뗍니다.
     }
+
+    mouseDownToDrag(div : HTMLElement, targets : HTMLElement[]) {
+        div.addEventListener("mousedown", event => {
+            event.stopPropagation();
+            if(targets.indexOf(<HTMLElement> event.target) != -1) {
+                this.dragStart(<Position> getRelativeClickPosition(event));
+            }
+        });
+    }
+
 }
 
 export default DraggableRenderer;

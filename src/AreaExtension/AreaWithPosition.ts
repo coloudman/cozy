@@ -1,4 +1,4 @@
-import { Area, CodeLoader, ControllerLoaders, CodeData } from "cozy_lib";
+import { Area, CodeLoader, ControllerLoaders, CodeData, Code } from "cozy_lib";
 import PositionedCode from "../structClass/PositionedCode";
 import Position from "../struct/Position";
 
@@ -35,7 +35,7 @@ class AreaWithPosition extends EventEmitter {
             return new PositionedCode(code, this.positions[index]);
         });
 
-        //stop으로 인해 죽어버린 놈들은 없애기 위해
+        //떨어진 놈들은 없애기 위해
         area.on("codeRemoved", code => {
             const index = this.positionedCodes.findIndex(positionedCode => {
                 return positionedCode.code === code;
@@ -52,12 +52,29 @@ class AreaWithPosition extends EventEmitter {
             this.emit("positionedCodeRemoved", positionedCode, index);
         });
     }
-    addPositionedCode(codeData : CodeData, position:Position) : PositionedCode {
+    addPositionedCode(code : Code, position:Position) : PositionedCode {
         //position(data)
         this.positions.push(position);
 
         //area code, codeData auto add
-        const code = this.area.addCode(codeData);
+        this.area.addCode(code);
+
+        //생성
+        const positionedCode = new PositionedCode(code, position);
+
+        //positionedCodes
+        this.positionedCodes.push(positionedCode);
+
+        //이벤트
+        this.emit("positionedCodeAdded", positionedCode);
+        return positionedCode;
+    }
+    addPositionedCodeFromCodeData(codeData : CodeData, position:Position) : PositionedCode {
+        //position(data)
+        this.positions.push(position);
+
+        //area code, codeData auto add
+        const code = this.area.addCodeFromCodeData(codeData);
 
         //생성
         const positionedCode = new PositionedCode(code, position);
