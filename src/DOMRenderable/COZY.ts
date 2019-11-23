@@ -30,6 +30,7 @@ class COZY {
     searchInput: HTMLInputElement;
     compilerControllerName: string;
     composers: Composers;
+    search: () => void;
 
     constructor(parentElement : HTMLElement, codeLoader : CodeLoader, cozyData:COZYData, { rendererControllerName="renderer", distance=15, compilerControllerName="compiler" }:{ rendererControllerName?:string; distance?:number; compilerControllerName?:string} = {}) {
         this.parentElement = parentElement;
@@ -38,6 +39,7 @@ class COZY {
 
         this.parentElement.addEventListener("keypress", event => {
             if(event.key === " ") {
+                event.preventDefault();
                 this.openTools();
             }
         });
@@ -69,57 +71,76 @@ class COZY {
         toolsElement.style.width = "100%";
         toolsElement.style.height = "100%";
         toolsElement.style.zIndex = "2";
-
         toolsElement.style.backgroundColor = "rgba(0,0,0,0.5)";
         toolsElement.style.display = "none";
-
         toolsElement.style.textAlign = "center";
+        toolsElement.style.overflow = "scroll";
 
-        const searchInput = document.createElement("input");
-        searchInput.type = "text";
-        searchInput.addEventListener("keypress", (event) => {
-            const searchInputValue = searchInput.value + event.key;
+        this.search = function search() {
+            const searchInputValue = this.searchInput.value;
+            console.log(searchInputValue);
             searchedDiv.innerHTML = "";
             Object.entries(codeLoader.packages).forEach(([outPackageName, codePackage] : [string, CodePackage]) => {
                 Object.entries(codePackage.body).forEach(([codeName, codeClass]) => {
-                    //코드 만들어 보기
-                    const codeData = {
-                        iD:{
-                            packageId:codePackage.id,
-                            packageVersion:codePackage.version,
-                            id:codeName
-                        },
-                        data:{},
-                        linkingPointsData:{},
-                        controllerDatas:{}
-                    };
-                    
-                    const code = this.area.makeCode(codeData);
-                    const renderedCode = (<Renderer> code.addController(rendererControllerName)).render();
+                    if(codePackage.id.indexOf(searchInputValue) != -1 || codeName.indexOf(searchInputValue) != -1) {
+                        //코드 만들어 보기
+                        const codeData = {
+                            iD:{
+                                packageId:codePackage.id,
+                                packageVersion:codePackage.version,
+                                id:codeName
+                            },
+                            data:{},
+                            linkingPointsData:{},
+                            controllerDatas:{}
+                        };
+                        
+                        const code = this.area.makeCode(codeData);
+                        const renderedCode = (<Renderer> code.addController(rendererControllerName)).render();
 
 
-                    const div = document.createElement("div");
-                    div.style.position = "relative";
-                    div.appendChild(document.createTextNode(searchInputValue + " ... " + codeName));
+                        const div = document.createElement("div");
+                        div.style.position = "relative";
+                        div.style.margin = "7px 0px 7px 0px";
+                        div.style.display = "flex";
+                        div.style.alignItems = "center";
+                        div.style.justifyContent = "center";
 
-                    const renderedCodeDiv = document.createElement("div");
-                    renderedCodeDiv.style.display = "inline-block";
-                    renderedCodeDiv.appendChild(renderedCode);
-                    
-                    div.appendChild(renderedCodeDiv);
+                        const span = document.createElement("span");
+                        span.style.marginRight = "15px";
+                        span.appendChild(document.createTextNode(`${codePackage.id} - ${codeName}`));
+                        div.appendChild(span);
 
-                    renderedCodeDiv.addEventListener("mousedown", event => {
-                        event.stopPropagation();
-                        this.draggable.dragStart(getRelativeElementPosition(renderedCode, toolsElement), {
-                            x:event.clientX,
-                            y:event.clientY
-                        }, code);
-                        toolsElement.style.display="none";
-                    }, true)
-                    searchedDiv.appendChild(div);
+                        const renderedCodeDiv = document.createElement("div");
+                        renderedCodeDiv.style.display = "inline-block";
+                        renderedCodeDiv.appendChild(renderedCode);
+                        
+                        div.appendChild(renderedCodeDiv);
+
+                        renderedCodeDiv.addEventListener("mousedown", event => {
+                            event.stopPropagation();
+                            const relativeElementPosition = getRelativeElementPosition(renderedCode, toolsElement);
+                            this.draggable.dragStart(
+                            {
+                                x:relativeElementPosition.x - toolsElement.scrollLeft,
+                                y:relativeElementPosition.y - toolsElement.scrollTop
+                            }, {
+                                x:event.clientX,// - toolsElement.scrollTop,
+                                y:event.clientY// - toolsElement.scrollLeft
+                            }
+                            , code);
+                            toolsElement.style.display="none";
+                        }, true)
+                        searchedDiv.appendChild(div);
+                    }
                 });
             })
-        });
+        }
+
+        const searchInput = document.createElement("input");
+        searchInput.type = "text";
+        searchInput.addEventListener("input", this.search.bind(this));
+
         this.searchInput = searchInput;
         toolsElement.appendChild(searchInput);
 
@@ -134,7 +155,7 @@ class COZY {
     openTools() {
         this.toolsElement.style.display = "block";
         this.searchInput.value = "";
-        this.searchInput.dispatchEvent(new KeyboardEvent("keypress"));
+        this.search();
         this.searchInput.focus();
     }
 
@@ -143,7 +164,6 @@ class COZY {
         this.composers[this.compilerControllerName] = composer;
     }
     compile() {
-        console.log(this.area.contexts);
         return this.area.compose(this.compilerControllerName);
     }
 }
