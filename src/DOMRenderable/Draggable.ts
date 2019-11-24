@@ -5,17 +5,29 @@ import { CodeData, Code } from "cozy_lib";
 import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
 import getRelativeElementPosition from "../Util/Render/getRelativeElementPosition";
 import Renderer from "../Element/Renderer/Renderer";
-
-
+import DraggableRendererContext from "../Context/DraggableRendererContext";
 
 /*
 드래그가 가능해 집니다.
 */
 
+declare interface Draggable {
+    on(event : "dragStart", listener : (position : Position, code : Code) => void) : this
+    on(event : "dragEnded", listener : (code : Code, position? : Position) => void) : this
+    on(event: string, listener: Function): this
+    on(event: RegExp, listener: Function): this
+
+    emit(event : "dragStart", position:Position, code:Code) : this
+    emit(event : "dragEnded", code:Code, position? : Position) : this
+    emit(event : string, ...args : any): this
+    emit(event : RegExp, ...args : any): this
+}
+
 class Draggable extends AreaWithPositionRenderer {
     blocksParentElement: HTMLDivElement;
     tempBlocksParentElement: HTMLDivElement;
     distance: number;
+    deleteMode: boolean;
     constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition, rendererControllerName : string = "renderer", distance : number = 15) {
         parentElement.style.position = "relative";
 
@@ -48,11 +60,17 @@ class Draggable extends AreaWithPositionRenderer {
         (콘텍스트 개조)
         */
        const _this = this;
-        (<any> areaWithPosition.area.contexts[this.rendererControllerName]).dragStart = function dragStart(clickPosition : Position, code : Code) {
+        (<DraggableRendererContext> areaWithPosition.area.contexts[this.rendererControllerName]).on("dragStart", function dragStart(clickPosition : Position, code : Code) {
+            _this.emit("dragStart", clickPosition, code);
             return _this.dragStart(getRelativeElementPosition((<Renderer>code.getController(_this.rendererControllerName)).rendered, _this.blocksParentElement), clickPosition, code);
-        }
+        });
     }
     dragStart( _position : Position, clickPosition : Position, code : Code) {
+        if(this.deleteMode) {
+            code.stop();
+            this.emit("dragEnded", code);
+            return;
+        }
         const _this = this;
             const position = {
                 ..._position
@@ -115,7 +133,7 @@ class Draggable extends AreaWithPositionRenderer {
                 const linkingPointWithPosition = linkingPointsWithPosition.find(linkingPointWithPosition => {
                     return (linkingPointWithPosition.position.x - position.x) **2 + (linkingPointWithPosition.position.y - position.y)**2 <= _this.distance**2;
                 });
-                if(linkingPointWithPosition) { //연결할 곳 있다
+                if(linkingPointWithPosition && !(<any>code).onlystart) { //연결할 곳 있다
                     const linkingPoint = linkingPointWithPosition.linkingPoint;
                     if(linkingPoint.linked) { //이미 연결된 놈 있다
                         const linkedCode = linkingPoint.linked;
@@ -126,14 +144,17 @@ class Draggable extends AreaWithPositionRenderer {
                         });
                     }
                     linkingPointWithPosition.linkingPoint.link(code);
+                    _this.emit("dragEnded", code);
                 } else { //없다..
                     _this.areaWithPosition.addPositionedCode(code, position);
+                    _this.emit("dragEnded", code, position);
                 }
                 //끄읕내.
                 div.outerHTML = "";
                 _this.tempBlocksParentElement.removeEventListener("mousemove", drag);
                 _this.tempBlocksParentElement.removeEventListener("mouseup", dragEnd);
                 _this.tempBlocksParentElement.style.display = "none";
+
             }
 
             this.tempBlocksParentElement.addEventListener("mousemove", drag);

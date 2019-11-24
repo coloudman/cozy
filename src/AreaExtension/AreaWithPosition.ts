@@ -25,6 +25,9 @@ class AreaWithPosition extends EventEmitter {
     public area: Area;
     public positionedCodes: PositionedCode[];
     private positions: Position[];
+    exportAreaWithPositionPositions() : Position[] {
+        return JSON.parse(JSON.stringify(this.positions));
+    }
     constructor(area : Area, positions : Position[]) {
         super();
         this.area = area;

@@ -3,6 +3,7 @@ import Renderer from "../Element/Renderer/Renderer";
 import Position from "../struct/Position";
 import PositionedCode from "../structClass/PositionedCode";
 import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPosition";
+import EventEmitter from "wolfy87-eventemitter";
 
 /*
 이 친구는 렌더링 '만' 합니다.
@@ -11,7 +12,7 @@ import CodeLinkingPointWithPosition from "../structClass/CodeLinkingPointWithPos
 뗐다 붙였다 못 합니다. 그건 콘텍스트를 이용해서 따로 빼십쇼~
 */
 
-export default class AreaWithPositionRenderer {
+export default class AreaWithPositionRenderer extends EventEmitter {
     parentElement: HTMLElement;
     areaWithPosition: AreaWithPosition;
     rendered: HTMLElement[];
@@ -36,6 +37,7 @@ export default class AreaWithPositionRenderer {
         return div;
     }
     constructor(parentElement : HTMLElement, areaWithPosition : AreaWithPosition, rendererControllerName : string = "renderer") {
+        super();
         //참고로 parentElement는 relative임
         this.parentElement = parentElement;
         this.parentElement.style.position = "relative";
